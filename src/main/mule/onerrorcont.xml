@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<validation:config name="Validation_Config" doc:name="Validation Config" doc:id="8a118d1e-a03f-4bd9-8e31-9d01e7dbdee8" i18n="#[payload]" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="54ba6a1c-1ec6-4cb5-9846-96f8b449b718" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<validation:config name="Validation_Config1" doc:name="Validation Config" doc:id="49414815-f6e0-48ac-8e7c-423b1a05bc27" i18n="#[payload]" />
+	<flow name="onerrorcontFlow" doc:id="c060f4bb-3722-4c58-a0ef-a0bda738c9c1" >
+		<http:listener doc:name="Listener" doc:id="deeb4044-9238-41c0-8f75-3f219a5ae1c1" config-ref="HTTP_Listener_config" path="/continue"/>
+		<set-payload value='#["Hello, from CICD demo" +now()]' doc:name="Set Payload" doc:id="33d4d5b4-0162-4940-9f73-fa024fc58ed2" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="53501a87-c416-484b-b504-88ff3d25ff46" >
+				<ee:transform doc:name="Transform Message" doc:id="3a505ddf-819e-49f8-968f-d25aeabdf770" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+"msg": "alphabet is not a integer"]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>
